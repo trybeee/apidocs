@@ -16,6 +16,9 @@ module Apidocs
       hash
     end
 
+    options[:parameters] ||= {}
+    options[:parameters].merge!(pagination_parameters) if options[:supports_pagination]
+
     doc = {
       :description => description,
       :uri => request.request_uri.gsub(/\?.+$/, ''),
@@ -36,6 +39,13 @@ module Apidocs
     JSON.pretty_generate(JSON.parse(response.body))
   rescue JSON::ParserError => e
     response.body
+  end
+
+  def pagination_parameters
+    {
+      :page => "Pagination. Specify a number of page to return. Default is 1",
+      :per_page => "How many records should appear on a page. Default is 10",
+    }
   end
 end
 
